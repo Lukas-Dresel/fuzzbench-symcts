@@ -30,7 +30,7 @@ RUN git clone \
         https://github.com/madler/zlib.git
 
 RUN git clone \
-        https://github.com/glennrp/libpng.git
+        https://github.com/glennrp/libpng.git -b libpng16
 RUN cp libpng/contrib/oss-fuzz/build.sh $SRC
 
 WORKDIR libpng

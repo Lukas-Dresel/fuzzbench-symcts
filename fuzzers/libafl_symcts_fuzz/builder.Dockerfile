@@ -35,20 +35,21 @@ RUN apt-get update && \
 RUN wget https://gist.githubusercontent.com/tokatoka/26f4ba95991c6e33139999976332aa8e/raw/698ac2087d58ce5c7a6ad59adce58dbfdc32bd46/createAliases.sh && chmod u+x ./createAliases.sh && ./createAliases.sh 
 
 # Download libafl.
-RUN git clone https://github.com/AFLplusplus/LibAFL /libafl
+RUN git clone https://github.com/Lukas-Dresel/LibAFL /libafl
 
+RUN echo 4
 # Checkout a current commit
-RUN cd /libafl && git pull && git checkout f856092f3d393056b010fcae3b086769377cba18 || true
+RUN cd /libafl && git pull && git checkout feat/symcts-fuzzbench || true
 # Note that due a nightly bug it is currently fixed to a known version on top!
 
 # Compile libafl.
 RUN cd /libafl && \
     unset CFLAGS CXXFLAGS && \
     export LIBAFL_EDGES_MAP_SIZE=2621440 && \
-    cd ./fuzzers/fuzzbench/fuzzbench && \
-    PATH="/root/.cargo/bin/:$PATH" cargo build --features=libafl/introspection --profile release-fuzzbench --features no_link_main
+    cd ./fuzzers/fuzzbench/fuzzbench_symcts_fuzz && \
+    PATH="/root/.cargo/bin/:$PATH" cargo build --features=introspection --profile release-fuzzbench --features no_link_main
 
 # Auxiliary weak references.
 RUN cd /libafl/fuzzers/fuzzbench/fuzzbench && \
-    clang -g -c stub_rt.c && \
+    clang -c stub_rt.c && \
     ar r /stub_rt.a stub_rt.o
